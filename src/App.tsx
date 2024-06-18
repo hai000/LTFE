@@ -1,13 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
+
 import './App.css';
-import ZaloHomePage from "./home";
+import  {LoginPage,ZaloHomePage} from "./home";
+import {Provider, useDispatch} from "react-redux";
+import {createStore} from "@reduxjs/toolkit";
+import {rootReducer} from "./store/rootReducer";
+import {BrowserRouter, Routes, Route, useRoutes, Router} from "react-router-dom";
+
 
 function App() {
-  return (
+    const store = createStore(rootReducer);
+    // let routes = useRoutes([
+    //     { path: "/", element: <LoginPage /> },
+    //     { path: "component2", element: <ZaloHomePage/> },
+    // ]);
 
-    <ZaloHomePage/>
-  );
+    return (
+        <Provider store={store}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path={"/"} element={<LoginPage/>}/>
+                    <Route path={"chat"} element={<ZaloHomePage/>}/>
+                </Routes>
+            </BrowserRouter>
+         </Provider>
+    );
 }
+
 
 export default App;

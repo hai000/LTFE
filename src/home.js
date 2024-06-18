@@ -1,9 +1,18 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, Card, InputGroup, FormControl, Button, Image} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import store from "./store/store";
+import {login} from "./store/action";
+import {useDispatch} from "react-redux";
+import useWebSocket from "react-use-websocket";
+import {payloadLoginAPI, websocket_url} from "./configAPI";
+import {useLocation, useNavigate} from "react-router-dom";
 
-const ZaloHomePage = () => {
+
+export const ZaloHomePage = () => {
     return (
 
         <Container>
@@ -143,4 +152,46 @@ const ZaloHomePage = () => {
     );
 };
 
-export default ZaloHomePage;
+export const  LoginPage = () => {
+    const {sendMessage,lastMessage, readyState} = useWebSocket(websocket_url,{
+    });
+    const [loginStatus, setLoginStatus] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (loginStatus){
+            navigate('/chat')
+        }
+    },[loginStatus]);
+
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    useEffect(() => {
+        if (lastMessage !== null){
+            if(JSON.parse(lastMessage.data).status=="success"){
+                store.dispatch(login(JSON.parse(lastMessage.data)))
+                setLoginStatus(true)
+            }
+        }
+    }, [lastMessage])
+    const onLogin = () => {
+        sendMessage(payloadLoginAPI(username, password))
+    }
+
+    return (
+        <Container>
+            <Row className="justify-content-center">
+                <Col>
+                    <Card>
+                        <Card.Body>
+                            <h1 className="text-center text-secondary">NLU CHAT APP</h1>
+                            <input type="text" placeholder="Username" className="form-control mb-3" id="username" onChange={e => setUsername(e.target.value)}/>
+                            <input type="password" placeholder="Password" className="form-control mb-3" id="password" onChange={e => setPassword(e.target.value)}/>
+                            <Button variant="primary" type="submit" className="w-100" onClick={onLogin}>Login</Button>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+    );
+};
+
