@@ -38,10 +38,13 @@
 }
 .chat-messages{
   height: 500px;
-  border: 1px solid #d2d2d2;
+
   margin-bottom: 20px;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.pb-4px{
+  padding-bottom: 4px !important;
 }
 .name-room{
   display: block;
@@ -167,4 +170,11 @@ color: white;
   /* Add your desired focus styles here */
   outline: 2px solid #e4e6ea; /* Example focus style */
   box-shadow: 0 0 10px rgba(218, 219, 220, 0.5); /* Example focus style */
+}
+.icon-onl{
+  width: 13px !important;
+  height: 13px !important;
+  padding: 0 !important;
+  border-radius: 50%;
+  background-color: #5dc46b;
 }
