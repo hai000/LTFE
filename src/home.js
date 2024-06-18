@@ -8,6 +8,7 @@ import {login} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket from "react-use-websocket";
 import {payloadLoginAPI, websocket_url} from "./configAPI";
+import {useLocation, useNavigate} from "react-router-dom";
 
 
 export const ZaloHomePage = () => {
@@ -122,16 +123,25 @@ export const ZaloHomePage = () => {
 export const  LoginPage = () => {
     const {sendMessage,lastMessage, readyState} = useWebSocket(websocket_url,{
     });
+    const [loginStatus, setLoginStatus] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (loginStatus){
+            navigate('/chat')
+        }
+    },[loginStatus]);
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     useEffect(() => {
         if (lastMessage !== null){
-            store.dispatch(login(JSON.parse(lastMessage.data)))
+            if(JSON.parse(lastMessage.data).status=="success"){
+                store.dispatch(login(JSON.parse(lastMessage.data)))
+                setLoginStatus(true)
+            }
         }
     }, [lastMessage])
     const onLogin = () => {
-
         sendMessage(payloadLoginAPI(username, password))
     }
 
