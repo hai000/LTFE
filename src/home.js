@@ -10,9 +10,28 @@ import {useDispatch} from "react-redux";
 import useWebSocket from "react-use-websocket";
 import {payloadLoginAPI, websocket_url} from "./configAPI";
 import {useLocation, useNavigate} from "react-router-dom";
+import {loadUser} from "./selector/selector";
+
+import {useWebSocketContext} from "./store/webSocketProvider";
+import ConversationPaneList from "./component/ConversationPane";
+import BoxChat from "./component/BoxChat";
+import data from "bootstrap/js/src/dom/data";
 
 
 export const ZaloHomePage = () => {
+    const user = loadUser(store.getState())
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (user.status != "success") {
+
+            navigate('/');
+        }
+    }, [navigate]);
+    const [conversationPaneState,setConversationPaneState] = useState(null)
+    // useEffect(()=>{
+    //     // cap nhat ten nguoi se nhan o day
+    //
+    // },[conversationPaneState])
     return (
 
         <Container>
@@ -37,55 +56,13 @@ export const ZaloHomePage = () => {
                                     <div className="btn btn-primary btn-icon ml-3"><i
                                         className="bi bi-arrow-right-circle-fill"></i></div>
                                 </Row>
-                                <Row className="bg-0 chat">
-                                    <div className="col-lg-2 d-flex justify-content-center">
-                                        <i className="fa-user fas icon-user"></i>
-                                    </div>
-                                    <div className="col-lg-10 row align-content-center">
-                                        <Row>
-                                            <strong className="card-title col-lg-7 pb-0 mb-0">long</strong>
-                                            <span className="card-title col-lg-5 pb-0 mb-0">17/06/2024, 20:42</span>
-                                        </Row>
-                                        <Row>
-                                            <span className="card-title w-fit ">21130356:</span>
-                                            <span className="card-title col-lg-8 pl-0"> 22222222</span>
-                                        </Row>
-                                    </div>
-                                </Row>
-                                <Row className="bg-1 chat">
+                                <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState}/>
 
-                                    <div className="col-lg-2 d-flex justify-content-center">
-                                        <i className="fa-users fas icon-group"></i>
-                                    </div>
-                                    <div className="col-lg-10 row align-content-center">
-                                        <Row>
-                                            <strong className="card-title col-lg-7 pb-0 mb-0">LTFE2024_Nhóm 31</strong>
-                                            <span className="card-title col-lg-5 pb-0 mb-0">17/06/2024, 20:42</span>
-                                        </Row>
-                                        <Row>
-                                            <span className="card-title w-fit ">21130356:</span>
-                                            <span className="card-title col-lg-8 pl-0"> 22222222</span>
-                                        </Row>
-                                    </div>
-                                </Row>
+
                             </Card.Body>
                             <Card.Body className="col-lg-7 border-left">
-                                <Row className="chat">
-                                    <div className="w-fit d-flex justify-content-center">
-                                        <i className="fa-user fas icon-user"></i>
-                                    </div>
-                                    <div className="col-lg-10 row align-content-center">
-                                        <Row>
-                                            <strong className="card-title col-lg-7 pb-0 mb-0 fs-5">long</strong>
-                                        </Row>
-                                        <Row className="align-items-center">
-                                            <div className=" icon-onl">
+                                <BoxChat data ={conversationPaneState}/>
 
-                                            </div>
-                                            <span className="card-title col-lg-8 mb-0 pl-1 pb-4px"> Online</span>
-                                        </Row>
-                                    </div>
-                                </Row>
                                 <div className="chat-messages">
                                     <div className="row my_message col-lg-10">
                                         <div className="row justify-content-end font-small">
@@ -153,8 +130,7 @@ export const ZaloHomePage = () => {
 };
 
 export const  LoginPage = () => {
-    const {sendMessage,lastMessage, readyState} = useWebSocket(websocket_url,{
-    });
+    const {sendMessage,lastMessage, readyState} = useWebSocketContext();
     const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
