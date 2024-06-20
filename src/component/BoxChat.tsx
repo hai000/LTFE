@@ -4,7 +4,7 @@ import {Row} from "react-bootstrap";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {payloadGetPeopleChatMessAPI, payloadGetRoomChatMessAPI} from "../configAPI";
 import store from "../store/store";
-import {setConversationPane, setMessages} from "../store/action";
+import {addMessage, setConversationPane, setMessages} from "../store/action";
 import {loadConversationPane, loadMessages, loadUser} from "../selector/selector";
 import {ConservationPaneItem} from "./ConversationPane";
 
@@ -52,10 +52,22 @@ export function ChatMessage(props: any) {
     )
 
 }
+function receiveMessage(data:any,username:any,stateComponent:any,setComponent:Function) {
+    if (data.status=="success" && data.event == "SEND_CHAT") {
+        console.log("Ban vua nhan duoc tin nhan")
+        if (data.data.name==username){
+            store.dispatch(addMessage(data.data))
+            setComponent(!stateComponent)
+        }
+
+    }
+}
+
 
 export function ChatMessageList(props: any) {
     const user = loadUser(store.getState())
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const [stateComponent,setStateComponent] = useState(false)
     if (lastMessage != null) {
         let data = JSON.parse(lastMessage.data);
 
@@ -70,7 +82,12 @@ export function ChatMessageList(props: any) {
 
         }
     }
+    useEffect(() => {
+        if (lastMessage != null) {
+            receiveMessage(JSON.parse(lastMessage.data),props.conversation[0],stateComponent,setStateComponent)
+        }
 
+    }, [lastMessage]);
 
 
     return (

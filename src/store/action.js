@@ -27,6 +27,12 @@ export const setMessages = (data) => {
 
     }
 }
+export const addMessage = (data) => {
+    return {
+        type: 'add.message',
+        payload: data
+    }
+}
 export const addConversationPane = (data) => {
     return {
         type: 'add.conversationPane',
