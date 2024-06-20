@@ -27,11 +27,8 @@ export const ZaloHomePage = () => {
             navigate('/');
         }
     }, [navigate]);
-    const [conversationPaneState,setConversationPaneState] = useState(null)
-    // useEffect(()=>{
-    //     // cap nhat ten nguoi se nhan o day
-    //
-    // },[conversationPaneState])
+    const [conversationPaneState,setConversationPaneState] = useState([null,null])
+
     return (
 
         <Container>
@@ -56,64 +53,13 @@ export const ZaloHomePage = () => {
                                     <div className="btn btn-primary btn-icon ml-3"><i
                                         className="bi bi-arrow-right-circle-fill"></i></div>
                                 </Row>
-                                <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState}/>
-
-
+                                <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState} />
                             </Card.Body>
                             <Card.Body className="col-lg-7 border-left">
-                                <BoxChat data ={conversationPaneState}/>
+                                <BoxChat data ={conversationPaneState}
+                                            />
 
-                                <div className="chat-messages">
-                                    <div className="row my_message col-lg-10">
-                                        <div className="row justify-content-end font-small">
-                                            <strong className="w-fit mr-0 pr-0">21130356</strong>
-                                            <span className="w-fit ml-0 pl-0">-10/06/2024, 9:18 AM</span>
-                                        </div>
-                                        <div className="row " id="my_message_container">
-                                            <span className="my_message_item">2222222</span><span
-                                            className="my_message_item">2222222</span><span
-                                            className="my_message_item">2222222</span>
-                                        </div>
 
-                                    </div>
-                                    <div className="row other_message col-lg-11">
-                                        <div className="row justify-content-start font-small">
-                                            <strong className="w-fit mr-0 pr-0">21130356</strong>
-                                            <span className="w-fit ml-0 pl-0">-10/06/2024, 9:18 AM</span>
-                                        </div>
-                                        <div className="row">
-                                            <div
-                                                className="col-lg-2 d-flex align-items-center justify-content-center pr-0">
-                                                <img className="avt"
-                                                     src="https://ptetutorials.com/images/user-profile.png"
-                                                     alt="sunil"/>
-                                            </div>
-                                            <div className="row col-lg-10 pl-0" id="other_message_container">
-                                                <span className="other_message_item">2222222</span><span
-                                                className="other_message_item">2222222</span><span
-                                                className="other_message_item">2222222</span>
-                                            </div>
-                                        </div>
-                                        <div className="row justify-content-start font-small">
-                                            <strong className="w-fit mr-0 pr-0">21130356</strong>
-                                            <span className="w-fit ml-0 pl-0">-10/06/2024, 9:18 AM</span>
-                                        </div>
-                                        <div className="row">
-                                            <div
-                                                className="col-lg-2 d-flex align-items-center justify-content-center pr-0">
-                                                <img className="avt"
-                                                     src="https://ptetutorials.com/images/user-profile.png"
-                                                     alt="sunil"/>
-                                            </div>
-                                            <div className="row col-lg-10 pl-0" id="other_message_container">
-                                                <span className="other_message_item">2222222</span><span
-                                                className="other_message_item">2222222</span><span
-                                                className="other_message_item">2222222</span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
                                 <div className="d-flex align-items-center send_msg">
                                     <FormControl type="text" placeholder="Type a message..."
                                                  className="flex-grow-1 mr-3 input_msg"/>
@@ -133,25 +79,28 @@ export const  LoginPage = () => {
     const {sendMessage,lastMessage, readyState} = useWebSocketContext();
     const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
-    useEffect(() => {
+
         if (loginStatus){
             navigate('/chat')
         }
-    },[loginStatus]);
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const onLogin = () => {// gui request len server
+        sendMessage(payloadLoginAPI(username, password))
+    }
     useEffect(() => {
-        if (lastMessage !== null){
-            if(JSON.parse(lastMessage.data).status=="success"){
-                store.dispatch(login(JSON.parse(lastMessage.data)))
+
+        if (lastMessage !== null){//nhan data tu server
+            if(JSON.parse(lastMessage.data).status=="success"&&JSON.parse(lastMessage.data).event=="LOGIN"){
+               let jsondata = JSON.parse(lastMessage.data)
+                jsondata.username = username
+                store.dispatch(login(jsondata))
                 setLoginStatus(true)
             }
         }
     }, [lastMessage])
-    const onLogin = () => {
-        sendMessage(payloadLoginAPI(username, password))
-    }
+
 
     return (
         <Container>
