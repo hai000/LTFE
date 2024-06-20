@@ -111,10 +111,13 @@
   border-bottom: 1px solid #d2d2d2;
 }
 .bg-0{
-  background-color: rgba(227, 227, 227, 0.78);
+  background-color: rgba(227, 227, 227, 0.78) !important;
 }
 .bg-1{
-  background-color: #fff;
+  background-color: #fff !important;
+}
+.bg-select{
+  background-color: rgba(28, 82, 246, 0.34) !important;
 }
 .chat{
   width: 98% !important;
@@ -190,4 +193,7 @@
   padding: 0 !important;
   border-radius: 50%;
   background-color: #5dc46b;
+}
+.time{
+  font-size: 13px;
 }
