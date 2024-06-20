@@ -1,6 +1,7 @@
 export const websocket_url = 'ws://140.238.54.136:8080/chat/chat';
 export const TYPE_ROOM = "room";
 export const TYPE_PEOPLE = "people";
+//type == 1 la room, type == 0 la people
 export  function payloadGetUserList(){
     return JSON.stringify({
         "action": "onchat",
@@ -40,6 +41,18 @@ export function payloadGetPeopleChatMessAPI(namePeople,page) {
             "event": "GET_PEOPLE_CHAT_MES",
             "data": {
                 "name": namePeople,
+                "page":page
+            }
+        }
+    })
+}
+export function payloadGetRoomChatMessAPI(nameRoom,page) {
+    return JSON.stringify({
+        "action": "onchat",
+        "data": {
+            "event": "GET_ROOM_CHAT_MES",
+            "data": {
+                "name": nameRoom,
                 "page":page
             }
         }

@@ -10,21 +10,26 @@ import {loadConversationPane} from "../selector/selector";
 import {useWebSocketContext} from "../store/webSocketProvider";
 import {useSelector} from "react-redux";
 
-export default function ConversationPaneList(props:any) {
+export default function ConversationPaneList(props: any) {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
-    const [name, setName] = useState(null);
+    const [conversation, setConversation] = useState([
+        null,
+        null]);
+
 
     useEffect(() => {
         if (lastMessage != null) {
             let data = JSON.parse(lastMessage.data);
             if (data.status == "success" && data.event == "GET_USER_LIST") {
                 store.dispatch(setConversationPane(data.data))
+
             }
         }
     }, [lastMessage])
     useEffect(() => {
-        props.update(name)
-    }, [name])
+        props.update(conversation)
+
+    }, [conversation])
 
     useEffect(() => {
         if (readyState == 1) {
@@ -34,13 +39,12 @@ export default function ConversationPaneList(props:any) {
     const conversationPanes = loadConversationPane(store.getState())
     return (
         conversationPanes.map((data: any) => (
-
             <ConservationPaneItem key={data.name}
                                   name={data.name}
                                   actionTime={data.actionTime}
-                                  nameClicked={name}
-                                  updateName={setName}
-            />
+                                  type={data.type}
+                                  nameClicked={conversation[0]}
+                                  updateName={setConversation}/>
         ))
     )
 }
@@ -48,7 +52,10 @@ export default function ConversationPaneList(props:any) {
 export function ConservationPaneItem(props: any) {
 
     const functionClick = () => {
-        props.updateName(props.name)
+        props.updateName([
+            props.name,
+            props.type
+        ])
     }
 
 
@@ -56,19 +63,19 @@ export function ConservationPaneItem(props: any) {
 
         <Row className={props.nameClicked === props.name ? "bg-0 chat" : "bg-1 chat"} onClick={functionClick}>
 
-                <div className="col-lg-2 d-flex justify-content-center">
-                    <i className="fa-user fas icon-user"></i>
-                </div>
-                <div className="col-lg-10 row align-content-center">
-                    <Row>
-                        <strong className="card-title col-lg-7 pb-0 mb-0">{props.name}</strong>
-                        <span className="card-title col-lg-5 pb-0 mb-0">{props.actionTime}</span>
-                    </Row>
-                    <Row>
-                        <span className="card-title w-fit ">21130356:</span>
-                        <span className="card-title col-lg-8 pl-0"> 22222222</span>
-                    </Row>
-                </div>
+            <div className="col-lg-2 d-flex justify-content-center">
+                <i className="fa-user fas icon-user"></i>
+            </div>
+            <div className="col-lg-10 row align-content-center">
+                <Row>
+                    <strong className="card-title col-lg-7 pb-0 mb-0">{props.name}</strong>
+                    <span className="card-title col-lg-5 pb-0 mb-0">{props.actionTime}</span>
+                </Row>
+                <Row>
+                    <span className="card-title w-fit ">21130356:</span>
+                    <span className="card-title col-lg-8 pl-0"> 22222222</span>
+                </Row>
+            </div>
 
         </Row>
 

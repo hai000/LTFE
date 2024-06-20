@@ -5,9 +5,24 @@ export const login = (data) => {
 
     }
 }
+export const setMessageList = (data) => {
+    return {
+        type: 'set.messageList',
+        payload: data
+
+    }
+
+}
 export const setConversationPane = (data) => {
     return {
         type: 'set.conversationPane',
+        payload: data
+
+    }
+}
+export const setMessages = (data) => {
+    return {
+        type: 'set.Messages',
         payload: data
 
     }
