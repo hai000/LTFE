@@ -65,8 +65,9 @@ export const ZaloHomePage = () => {
 
                                 <div className="d-flex align-items-center send_msg">
                                     <FormControl type="text" placeholder="Type a message..."
-                                                 className="flex-grow-1 mr-3 input_msg"/>
-                                    <Button variant="primary"><i aria-hidden="true"
+                                                 className="flex-grow-1 mr-3 input_msg" id="inputMsg" onChange={inputMsg}
+                                    />
+                                    <Button variant="primary" id="btnSend" disabled><i aria-hidden="true"
                                                                  className="fa fa-paper-plane"></i></Button>
                                 </div>
                             </Card.Body>
@@ -122,4 +123,16 @@ export const  LoginPage = () => {
         </Container>
     );
 };
+function inputMsg() {
+    var inputMsgElement = document.getElementById("inputMsg");
+    if (inputMsgElement !== null) {
+        var inputMsg = inputMsgElement.value;
+        var btnSend = document.getElementById("btnSend");
 
+        if (inputMsg.length === 0) {
+            btnSend.disabled = true;
+        } else {
+            btnSend.disabled = false;
+        }
+    }
+}
