@@ -38,7 +38,7 @@ export const ZaloHomePage = () => {
             </Row>
             <Row className="justify-content-center">
                 <Col>
-                    <Card>
+                    <Card className="mb-5">
 
                         <Row className="">
                             <Card.Body className="col-lg-5">
@@ -53,7 +53,10 @@ export const ZaloHomePage = () => {
                                     <div className="btn btn-primary btn-icon ml-3"><i
                                         className="bi bi-arrow-right-circle-fill"></i></div>
                                 </Row>
-                                <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState} />
+                                <Row className="chat-list">
+                                    <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState} />
+
+                                </Row>
                             </Card.Body>
                             <Card.Body className="col-lg-7 border-left">
                                 <BoxChat data ={conversationPaneState}
