@@ -20,31 +20,38 @@ export default function BoxChat(props: any) {
     }, props.data);
 
 
-    return (<div>
-            <ConversationObject conversation={props.data} status="Online"/>
-            <ChatMessageList conversation={props.data}/>
-        </div>
+    return (
+        <Row><ConversationObject conversation={props.data} status="Online"/>
+            <div className="chat-messages row">
+                <ChatMessageList conversation={props.data}/>
+            </div>
+        </Row>
 
 
-    )
+)
 }
 
 export function ChatMessage(props: any) {
 
     return (
         <div className={props.my_message ? "row my_message col-lg-10" : "row other_message col-lg-11"}>
-            <div
+            {props.isNear?null:
+                <div
                 className={props.my_message ? "row justify-content-end font-small" : "row justify-content-start font-small"}>
                 <strong className="w-fit mr-0 pr-0">{props.name}</strong>
                 <span className="w-fit ml-0 pl-0">-{props.actionTime}</span>
-            </div>
-            <div className="row ">
+                </div>
+            }
+            <div className="row align-items-end">
 
                 {props.my_message ? null : <div
                     className="col-lg-2 d-flex align-items-center justify-content-center pr-0">
-                    <img className="avt"
-                         src="https://ptetutorials.com/images/user-profile.png"
-                         alt="sunil"/>
+                    {props.isNear ? null :
+                        <img className="avt"
+                             src="https://ptetutorials.com/images/user-profile.png"
+                             alt="sunil"/>
+                    }
+
                 </div>}
                 <span className={props.my_message ? "my_message_item" : "other_message_item"}>{props.mes}</span>
             </div>
@@ -90,16 +97,32 @@ export function ChatMessageList(props: any) {
     }, [lastMessage]);
 
 
+    let messages = loadMessages(store.getState()).reverse();
+    let messageElements = [];
+
+    for (let i = 0; i < messages.length; i++) {
+        let data = messages[i];
+        let oldName = i >0 ? messages[i-1].name:"";
+        let curName = data.name;
+        let name = curName != oldName ? curName: "";
+        let createAt=curName != oldName ? data.createAt: "";
+
+        messageElements.push(
+            <ChatMessage
+                name={curName}
+                my_message={data.name === user.username}
+                mes={data.mes}
+                actionTime={data.createAt}
+                isNear ={oldName == curName}
+            />
+        );
+    }
+
     return (
         <div>
-            {loadMessages(store.getState()).reverse().map((data: any) => (
-                <ChatMessage name={data.name} my_message={(data.name == user.username)} mes={data.mes}
-                             actionTime={data.createAt}/>
-            ))}
-
+            {messageElements}
         </div>
-
-    )
+    );
 
 }
 
