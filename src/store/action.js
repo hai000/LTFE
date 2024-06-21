@@ -5,6 +5,13 @@ export const login = (data) => {
 
     }
 }
+export const updateUser = (data) => {
+    return {
+        type: 'user.update',
+        payload: data
+
+    }
+}
 export const setMessageList = (data) => {
     return {
         type: 'set.messageList',

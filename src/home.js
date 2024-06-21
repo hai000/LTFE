@@ -5,10 +5,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
 import store from "./store/store";
-import {login} from "./store/action";
+import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket from "react-use-websocket";
-import {payloadLoginAPI, websocket_url} from "./configAPI";
+import {payloadLoginAPI, payloadReLoginAPI, websocket_url} from "./configAPI";
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
 
@@ -16,17 +16,38 @@ import {useWebSocketContext} from "./store/webSocketProvider";
 import ConversationPaneList from "./component/ConversationPane";
 import BoxChat from "./component/BoxChat";
 import data from "bootstrap/js/src/dom/data";
+import {InputChat} from "./component/InputChat";
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import { config } from '@fortawesome/fontawesome-svg-core';
+config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically
 
 
 export const ZaloHomePage = () => {
     const user = loadUser(store.getState())
     const navigate = useNavigate();
+    const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const [stateComponent, setStateComponent] = useState(false)
     useEffect(() => {
-        if (user.status != "success") {
 
+        if (user.status != "success") {
             navigate('/');
+         }else if (user.status == "success") {
+            sendMessage(payloadReLoginAPI(user.username, user.data.RE_LOGIN_CODE))
+
         }
     }, [navigate]);
+    useEffect(() => {
+        if (lastMessage !== null) {
+            if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
+
+                store.dispatch(updateUser(JSON.parse(lastMessage.data).data))
+                setStateComponent(!stateComponent)
+            }else if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "RE_LOGIN"){
+                navigate('/')
+            }
+        }
+
+    },[lastMessage])
     const [conversationPaneState,setConversationPaneState] = useState([null,null])
 
     return (
@@ -59,17 +80,10 @@ export const ZaloHomePage = () => {
                                 </Row>
                             </Card.Body>
                             <Card.Body className="col-lg-7 border-left">
-                                <BoxChat data ={conversationPaneState}
-                                            />
+                                <BoxChat data ={conversationPaneState}/>
 
 
-                                <div className="d-flex align-items-center send_msg">
-                                    <FormControl type="text" placeholder="Type a message..."
-                                                 className="flex-grow-1 mr-3 input_msg" id="inputMsg" onChange={inputMsg}
-                                    />
-                                    <Button variant="primary" id="btnSend" disabled><i aria-hidden="true"
-                                                                 className="fa fa-paper-plane"></i></Button>
-                                </div>
+
                             </Card.Body>
                         </Row>
                     </Card>
@@ -83,7 +97,6 @@ export const  LoginPage = () => {
     const {sendMessage,lastMessage, readyState} = useWebSocketContext();
     const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
-
         if (loginStatus){
             navigate('/chat')
         }
