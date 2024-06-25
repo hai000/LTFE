@@ -9,6 +9,8 @@ import {addConversationPane, login, setConversationPane} from "../store/action";
 import {loadConversationPane} from "../selector/selector";
 import {useWebSocketContext} from "../store/webSocketProvider";
 import {useSelector} from "react-redux";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPeopleGroup, faUser, faUserGroup, faUsers} from "@fortawesome/free-solid-svg-icons";
 
 export default function ConversationPaneList(props: any) {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
@@ -76,8 +78,11 @@ export function ConservationPaneItem(props: any) {
         <Row className={(props.nameClicked === props.name ? "bg-select chat" : "bg-"+props.index+" chat")} onClick={functionClick}>
 
             <div className="col-lg-2 d-flex justify-content-center">
-                <i className="fa-user fas icon-user"></i>
+                {props.type ==0? <FontAwesomeIcon
+                    icon={faUser} className="icon-user p-1"/> : <FontAwesomeIcon icon={faUsers} className="icon-group p-1" />}
+
             </div>
+
             <div className="col-lg-10 row align-content-center p-0">
                 <Row className="justify-content-between">
                     <strong className="card-title w-fit pb-0 mb-0">{props.name}</strong>
