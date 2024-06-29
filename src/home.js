@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {Container, Row, Col, Card, InputGroup, FormControl, Button, Image} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlus} from '@fortawesome/free-solid-svg-icons';
+import '@fortawesome/react-fontawesome';
+import '@fortawesome/free-solid-svg-icons';
 import store from "./store/store";
 import {login} from "./store/action";
 import {useDispatch} from "react-redux";
@@ -16,6 +16,8 @@ import {useWebSocketContext} from "./store/webSocketProvider";
 import ConversationPaneList from "./component/ConversationPane";
 import BoxChat from "./component/BoxChat";
 import data from "bootstrap/js/src/dom/data";
+import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 
 export const ZaloHomePage = () => {
@@ -67,8 +69,7 @@ export const ZaloHomePage = () => {
                                     <FormControl type="text" placeholder="Type a message..."
                                                  className="flex-grow-1 mr-3 input_msg" id="inputMsg" onChange={inputMsg}
                                     />
-                                    <Button variant="primary" id="btnSend" disabled><i aria-hidden="true"
-                                                                 className="fa fa-paper-plane"></i></Button>
+                                    <Button variant="primary" id="btnSend" disabled><FontAwesomeIcon icon={faPaperPlane}/></Button>
                                 </div>
                             </Card.Body>
                         </Row>
