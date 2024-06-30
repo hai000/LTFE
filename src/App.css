@@ -81,7 +81,7 @@
   align-items: center;
   border-radius: 50%;
   width: 40px;
-  height: 40px;
+  height: 40px !important;
   justify-content: center;
   font-size: 25px;
   border-color: #458ef7;
@@ -133,7 +133,7 @@
   align-items: center;
   border-radius: 50%;
   width: 40px;
-  height: 40px;
+  height: 40px !important;
   justify-content: center;
   font-size: 25px;
   border-color: #5dc46b;
@@ -141,17 +141,20 @@
   color: white;
 }
 .my_message_item{
-  display: flex;
+  text-align: end;
+  /*display: flex;*/
+  width: 100% !important;
   background-color: rgba(210, 210, 210, 0.43);
   justify-content: flex-end;
   border-radius: 5px;
   padding: 5px 10px;
   margin: 5px 0;
   min-height: 34px;
-
+  word-wrap: break-word;
 }
 .other_message_item{
-  display: flex;
+  text-align: start;
+  /*display: flex;*/
   background-color: #5e7ecc;
   color: white;
   border-radius: 5px;
@@ -160,6 +163,7 @@
   width: 80% !important;
   height: fit-content !important;
   min-height: 34px !important;
+  word-wrap: break-word;
 }
 .my_message{
   justify-content: flex-end;
@@ -196,4 +200,21 @@
 }
 .time{
   font-size: 13px;
+}
+.list-icon-block {
+  position: absolute !important;
+  top: 80px !important;
+  display: block !important;
+}
+.list-icon-none {
+  position: absolute !important;
+  top: 80px !important;
+  display: none !important;
+}
+.icon{
+  width: 18px;
+}
+.iconsRef{
+  font-size: 20px;
+  cursor: pointer;
 }

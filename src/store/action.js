@@ -5,6 +5,13 @@ export const login = (data) => {
 
     }
 }
+export const updateUser = (data) => {
+    return {
+        type: 'user.update',
+        payload: data
+
+    }
+}
 export const setMessageList = (data) => {
     return {
         type: 'set.messageList',
@@ -25,6 +32,12 @@ export const setMessages = (data) => {
         type: 'set.Messages',
         payload: data
 
+    }
+}
+export const addMessage = (data) => {
+    return {
+        type: 'add.message',
+        payload: data
     }
 }
 export const addConversationPane = (data) => {

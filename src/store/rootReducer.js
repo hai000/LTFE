@@ -28,6 +28,13 @@ export const rootReducer = createReducer(initState, (builder) => {
     builder.addCase('set.Messages', (state, action) => {
         state.messages = action.payload
     })
+    builder.addCase('add.message', (state, action) => {
+
+            state.messages.unshift(action.payload)
+    })
+    builder.addCase('user.update', (state, action) => {
+            state.user.data = action.payload
+    })
 
 });
 

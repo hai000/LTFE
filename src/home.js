@@ -5,10 +5,10 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import '@fortawesome/react-fontawesome';
 import '@fortawesome/free-solid-svg-icons';
 import store from "./store/store";
-import {login} from "./store/action";
+import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket from "react-use-websocket";
-import {payloadLoginAPI, websocket_url} from "./configAPI";
+import {payloadLoginAPI, payloadReLoginAPI, websocket_url} from "./configAPI";
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
 
@@ -16,20 +16,44 @@ import {useWebSocketContext} from "./store/webSocketProvider";
 import ConversationPaneList from "./component/ConversationPane";
 import BoxChat from "./component/BoxChat";
 import data from "bootstrap/js/src/dom/data";
+
 import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+
+import {InputChat} from "./component/InputChat";
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import {config} from '@fortawesome/fontawesome-svg-core';
+
+config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically
 
 
 export const ZaloHomePage = () => {
     const user = loadUser(store.getState())
     const navigate = useNavigate();
+    const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const [stateComponent, setStateComponent] = useState(false)
     useEffect(() => {
-        if (user.status != "success") {
 
+        if (user.status != "success") {
             navigate('/');
+        } else if (user.status == "success") {
+            sendMessage(payloadReLoginAPI(user.username, user.data.RE_LOGIN_CODE))
+
         }
     }, [navigate]);
-    const [conversationPaneState,setConversationPaneState] = useState([null,null])
+    useEffect(() => {
+        if (lastMessage !== null) {
+            if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
+
+                store.dispatch(updateUser(JSON.parse(lastMessage.data).data))
+                setStateComponent(!stateComponent)
+            } else if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
+                navigate('/')
+            }
+        }
+
+    }, [lastMessage])
+    const [conversationPaneState, setConversationPaneState] = useState([null, null])
 
     return (
 
@@ -56,21 +80,16 @@ export const ZaloHomePage = () => {
                                         className="bi bi-arrow-right-circle-fill"></i></div>
                                 </Row>
                                 <Row className="chat-list">
-                                    <ConversationPaneList data ={conversationPaneState} update={setConversationPaneState} />
+                                    <ConversationPaneList data={conversationPaneState}
+                                                          update={setConversationPaneState}/>
 
                                 </Row>
                             </Card.Body>
                             <Card.Body className="col-lg-7 border-left">
-                                <BoxChat data ={conversationPaneState}
-                                            />
+                                <BoxChat data={conversationPaneState}/>
 
 
-                                <div className="d-flex align-items-center send_msg">
-                                    <FormControl type="text" placeholder="Type a message..."
-                                                 className="flex-grow-1 mr-3 input_msg" id="inputMsg" onChange={inputMsg}
-                                    />
-                                    <Button variant="primary" id="btnSend" disabled><FontAwesomeIcon icon={faPaperPlane}/></Button>
-                                </div>
+
                             </Card.Body>
                         </Row>
                     </Card>
@@ -80,14 +99,13 @@ export const ZaloHomePage = () => {
     );
 };
 
-export const  LoginPage = () => {
-    const {sendMessage,lastMessage, readyState} = useWebSocketContext();
+export const LoginPage = () => {
+    const {sendMessage, lastMessage, readyState} = useWebSocketContext();
     const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
-
-        if (loginStatus){
-            navigate('/chat')
-        }
+    if (loginStatus) {
+        navigate('/chat')
+    }
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -96,9 +114,9 @@ export const  LoginPage = () => {
     }
     useEffect(() => {
 
-        if (lastMessage !== null){//nhan data tu server
-            if(JSON.parse(lastMessage.data).status=="success"&&JSON.parse(lastMessage.data).event=="LOGIN"){
-               let jsondata = JSON.parse(lastMessage.data)
+        if (lastMessage !== null) {//nhan data tu server
+            if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "LOGIN") {
+                let jsondata = JSON.parse(lastMessage.data)
                 jsondata.username = username
                 store.dispatch(login(jsondata))
                 setLoginStatus(true)
@@ -114,8 +132,10 @@ export const  LoginPage = () => {
                     <Card>
                         <Card.Body>
                             <h1 className="text-center text-secondary">NLU CHAT APP</h1>
-                            <input type="text" placeholder="Username" className="form-control mb-3" id="username" onChange={e => setUsername(e.target.value)}/>
-                            <input type="password" placeholder="Password" className="form-control mb-3" id="password" onChange={e => setPassword(e.target.value)}/>
+                            <input type="text" placeholder="Username" className="form-control mb-3" id="username"
+                                   onChange={e => setUsername(e.target.value)}/>
+                            <input type="password" placeholder="Password" className="form-control mb-3" id="password"
+                                   onChange={e => setPassword(e.target.value)}/>
                             <Button variant="primary" type="submit" className="w-100" onClick={onLogin}>Login</Button>
                         </Card.Body>
                     </Card>
@@ -124,6 +144,7 @@ export const  LoginPage = () => {
         </Container>
     );
 };
+
 function inputMsg() {
     var inputMsgElement = document.getElementById("inputMsg");
     if (inputMsgElement !== null) {
