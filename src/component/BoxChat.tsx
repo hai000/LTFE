@@ -22,7 +22,7 @@ export default function BoxChat(props: any) {
         }
     }, props.data);
 
-
+    console.log(props.data)
     return (
         <div className={"p-0"}>
             <Row><ConversationObject conversation={props.data} status="Online"/>
@@ -89,11 +89,13 @@ function receiveMessage(data: any, username: any, stateComponent: any, setCompon
 }
 
 export function ChatMessageList(props: any) {
+    console.log("props ", props)
     let messages = loadMessages(store.getState()).reverse();
     let messageElements = [];
     const user = loadUser(store.getState())
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
+    console.log('lastMessage ',lastMessage)
     useEffect(() => {
         if (lastMessage != null) {
             let data = JSON.parse(lastMessage.data);
@@ -122,7 +124,7 @@ export function ChatMessageList(props: any) {
     }, [lastMessage]);
 
      messages = loadMessages(store.getState()).reverse();
-
+    // console.log(messages)
     for (let i = 0; i < messages.length; i++) {
         let data = messages[i];
         let oldName = i > 0 ? messages[i - 1].name : "";

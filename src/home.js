@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Container, Row, Col, Card, InputGroup, FormControl, Button, Image} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -8,19 +8,14 @@ import store from "./store/store";
 import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket from "react-use-websocket";
-import {payloadLoginAPI, payloadReLoginAPI, websocket_url} from "./configAPI";
+import {payloadLoginAPI, payloadLogout, payloadReLoginAPI, websocket_url} from "./configAPI";
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
 
-import {useWebSocketContext} from "./store/webSocketProvider";
+import {useLoginStatusContext, useWebSocketContext} from "./store/webSocketProvider";
 import ConversationPaneList from "./component/ConversationPane";
 import BoxChat from "./component/BoxChat";
-import data from "bootstrap/js/src/dom/data";
 
-import {faPaperPlane} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-
-import {InputChat} from "./component/InputChat";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {config} from '@fortawesome/fontawesome-svg-core';
 
@@ -32,6 +27,15 @@ export const ZaloHomePage = () => {
     const navigate = useNavigate();
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
+    const {loginStatus, setLoginStatus} = useLoginStatusContext();
+
+    const onLogout =() =>{
+        sendMessage(payloadLogout())
+        navigate("/")
+        setLoginStatus(false)
+    }
+
+
     useEffect(() => {
 
         if (user.status != "success") {
@@ -59,7 +63,7 @@ export const ZaloHomePage = () => {
 
         <Container>
             <Row>
-                <button type="button" className="btn btn-secondary col-lg-1 m-3">Logout</button>
+                <button type="button" className="btn btn-secondary col-lg-1 m-3" onClick={onLogout}>Logout</button>
                 <button type="button" className="btn btn-primary col-lg-1 m-3">Add</button>
             </Row>
             <Row className="justify-content-center">
@@ -101,6 +105,7 @@ export const ZaloHomePage = () => {
 
 export const LoginPage = () => {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext();
+    // const {loginStatus, setLoginStatus} = useLoginStatusContext();
     const [loginStatus, setLoginStatus] = useState(false);
     const navigate = useNavigate();
     if (loginStatus) {
@@ -111,6 +116,7 @@ export const LoginPage = () => {
     const [password, setPassword] = useState('')
     const onLogin = () => {// gui request len server
         sendMessage(payloadLoginAPI(username, password))
+
     }
     useEffect(() => {
 
@@ -144,6 +150,10 @@ export const LoginPage = () => {
         </Container>
     );
 };
+
+  const Logout=()=>{
+
+  }
 
 function inputMsg() {
     var inputMsgElement = document.getElementById("inputMsg");

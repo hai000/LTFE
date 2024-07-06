@@ -10,6 +10,15 @@ export  function payloadGetUserList(){
         }
     })
 }
+
+export  function payloadLogout(){
+    return JSON.stringify({
+        "action": "onchat",
+        "data": {
+            "event": "LOGOUT"
+        }
+    })
+}
 export  function payloadCheckUser(username){
     return JSON.stringify({
         "action": "onchat",

@@ -9,8 +9,6 @@ import EmojiPicker, {EmojiClickData} from 'emoji-picker-react';
 // @ts-ignore
 import {PickerProps} from "emoji-mart";
 import { far } from '@fortawesome/free-regular-svg-icons'
-import {MouseDownEvent} from "emoji-picker-react/dist/config/config";
-import {Emoji} from "emoji-mart/dist-es/utils/data";
 
 interface MyPickerProps extends PickerProps {
     onClose: () => void;
