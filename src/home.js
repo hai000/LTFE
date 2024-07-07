@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {Container, Row, Col, Card, InputGroup, FormControl, Button, Image} from 'react-bootstrap';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -7,7 +7,7 @@ import '@fortawesome/free-solid-svg-icons';
 import store from "./store/store";
 import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
-import useWebSocket from "react-use-websocket";
+import useWebSocket, {resetGlobalState} from "react-use-websocket";
 import {payloadLoginAPI, payloadLogout, payloadReLoginAPI, websocket_url} from "./configAPI";
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
@@ -18,6 +18,7 @@ import BoxChat from "./component/BoxChat";
 
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {config} from '@fortawesome/fontawesome-svg-core';
+import * as getWebSocket from "react-dom/test-utils";
 
 config.autoAddCss = false; // Tell Font Awesome to skip adding the CSS automatically
 
@@ -28,11 +29,13 @@ export const ZaloHomePage = () => {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
     const {loginStatus, setLoginStatus} = useLoginStatusContext();
-
     const onLogout =() =>{
         sendMessage(payloadLogout())
-        navigate("/")
+        // setWebsocketUrl("wss://demos.kaazing.com/echo")
+
         setLoginStatus(false)
+        navigate("/")
+
     }
 
 
@@ -58,7 +61,7 @@ export const ZaloHomePage = () => {
 
     }, [lastMessage])
     const [conversationPaneState, setConversationPaneState] = useState([null, null])
-
+    // console.log(conversationPaneState)
     return (
 
         <Container>
@@ -104,9 +107,9 @@ export const ZaloHomePage = () => {
 };
 
 export const LoginPage = () => {
-    const {sendMessage, lastMessage, readyState} = useWebSocketContext();
+    const {sendMessage, lastMessage, readyState, getWebSocket} = useWebSocketContext();
     // const {loginStatus, setLoginStatus} = useLoginStatusContext();
-    const [loginStatus, setLoginStatus] = useState(false);
+    const {loginStatus, setLoginStatus} = useLoginStatusContext();
     const navigate = useNavigate();
     if (loginStatus) {
         navigate('/chat')
@@ -115,8 +118,11 @@ export const LoginPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const onLogin = () => {// gui request len server
-        sendMessage(payloadLoginAPI(username, password))
+        if(readyState ==2 || readyState ==3){
 
+        }
+        sendMessage(payloadLoginAPI(username, password))
+        console.log(readyState)
     }
     useEffect(() => {
 
@@ -128,6 +134,7 @@ export const LoginPage = () => {
                 setLoginStatus(true)
             }
         }
+        console.log(lastMessage)
     }, [lastMessage])
 
 
@@ -151,9 +158,7 @@ export const LoginPage = () => {
     );
 };
 
-  const Logout=()=>{
 
-  }
 
 function inputMsg() {
     var inputMsgElement = document.getElementById("inputMsg");

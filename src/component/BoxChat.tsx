@@ -14,6 +14,7 @@ import {InputChat} from "./InputChat";
 export default function BoxChat(props: any) {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [myMessage, setMyMessage] = useState("")
+    console.log(props)
     useEffect(() => {
         if (props.data[1] == 1) {
             sendMessage(payloadGetRoomChatMessAPI(props.data[0], 1))
@@ -22,15 +23,20 @@ export default function BoxChat(props: any) {
         }
     }, props.data);
 
-    console.log(props.data)
+
     return (
         <div className={"p-0"}>
-            <Row><ConversationObject conversation={props.data} status="Online"/>
+            <Row>
+                {props.data[1] !=null?<ConversationObject conversation={props.data} status="Online"className={"border-bottom"}/>:""}
                 <div className="chat-messages row">
-                    <ChatMessageList conversation={props.data} myMess={myMessage}/>
+                    {props.data[1] != null? <ChatMessageList conversation={props.data} myMess={myMessage}/>:
+                        <div className={"d-flex align-items-center justify-content-center w-100 h-100"}>
+                            <h1>Chào mừng đến với NLU CHAT</h1>
+                        </div>}
+
                 </div>
             </Row>
-            <InputChat data={props.data} setMyMess={setMyMessage}/>
+            {props.data[1] !=null?<InputChat data={props.data} setMyMess={setMyMessage}/>:""}
         </div>
 
 
@@ -89,13 +95,13 @@ function receiveMessage(data: any, username: any, stateComponent: any, setCompon
 }
 
 export function ChatMessageList(props: any) {
-    console.log("props ", props)
+
     let messages = loadMessages(store.getState()).reverse();
     let messageElements = [];
     const user = loadUser(store.getState())
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
-    console.log('lastMessage ',lastMessage)
+
     useEffect(() => {
         if (lastMessage != null) {
             let data = JSON.parse(lastMessage.data);

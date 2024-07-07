@@ -39,7 +39,7 @@ export default function ConversationPaneList(props: any) {
         }
     }, [readyState])
     const conversationPanes = loadConversationPane(store.getState())
-    let conversationPaneElements = [];
+    let conversationPaneElements:JSX.Element[] = [];
 
     for (let i = 0; i < conversationPanes.length; i++) {
         let data = conversationPanes[i];
