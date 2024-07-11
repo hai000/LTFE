@@ -7,7 +7,7 @@ import store from "../store/store";
 import {addMessage, setConversationPane, setMessages} from "../store/action";
 import {loadConversationPane, loadMessages, loadUser} from "../selector/selector";
 import {ConservationPaneItem} from "./ConversationPane";
-import {faUser} from "@fortawesome/free-solid-svg-icons";
+import {faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {InputChat} from "./InputChat";
 
@@ -46,7 +46,6 @@ export default function BoxChat(props: any) {
 export function ChatMessage(props: any) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(props.mes, 'text/html');
-    const imgElements = Array.from(doc.querySelectorAll('img'));
     return (
         <div className={props.my_message ? "d-flex flex-column my_message col-lg-9 pr-0" : "d-flex flex-column other_message col-lg-10 pl-0"}>
             {props.isNear ? null :
@@ -68,19 +67,12 @@ export function ChatMessage(props: any) {
 
                 </div>}
                 <p className={props.my_message ? "my_message_item" : "other_message_item"}>
-                        <div
-                            className="message-content"
-                            dangerouslySetInnerHTML={{
-                                __html: props.mes.replace(
-                                    /<img([^>]+)>/gi,
-                                    (match: string, attributes: string) => `<img ${attributes} class="icon" />`
-                                ),
-                            }}
-                        />
-                    </p>
+                    <div className={"mes_content"} dangerouslySetInnerHTML={{__html: props.mes}}></div>
+                    {/*{props.mes}*/}
+                </p>
             </div>
         </div>
-)
+    )
 
 }
 
@@ -158,11 +150,14 @@ export function ChatMessageList(props: any) {
 }
 
 export function ConversationObject(props: any) {
+    console.log(props)
     return (
         <Row className="chat">
             <div className="w-fit d-flex justify-content-center">
-                <FontAwesomeIcon
-                    icon={faUser} className="icon-user p-1"/>
+                {props.conversation[1] ==0?<FontAwesomeIcon
+                    icon={faUser} className="icon-user p-1"/>:
+                    <FontAwesomeIcon
+                        icon={faUsers} className="icon-group p-1"/>}
             </div>
             <div className="col-lg-10 row align-content-center">
                 <Row>

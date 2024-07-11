@@ -46,25 +46,17 @@ export function InputChat(props:any) {
         }
     };
     const handleClickIcon = (event: MouseEvent) => {
-
         if (iconsRef.current && iconsRef.current.contains(event.target as Node)) {
-
             if(!open){
                 open = true;
                 setOpen(true) ;
                 if(emojiContainer){
                     if(open){
-
                         emojiContainer.style.display="block";
                     }
                 }
             }
-
-
-
-
         }
-
     };
      function handleMessageChange(event:any) {
          setMessage(event.target.value);
@@ -97,22 +89,15 @@ export function InputChat(props:any) {
         let convertMsg ='';
         const parts = message.split(/([\p{Emoji}])/gu);
         console.log('parts ',parts)
-        // console.log(mapIcon.keys())
-
         parts.forEach(value =>{
-
             if(mapIcon.has(value)){
                 convertMsg += (mapIcon.get(value));
             }else{
                 convertMsg += value;
             }
         })
-
-        console.log(convertMsg);
-        // console.log(convertMsg)
         sendMessage(payloadSendChatAPI(props.data[0],convertMsg,(props.data[1]==0?TYPE_PEOPLE:TYPE_ROOM)))
-        // console.log("message ", message)
-        props.setMyMess(message);
+        props.setMyMess(convertMsg);
         setMessage("");
         convertMsg="";
 
@@ -141,5 +126,5 @@ export function InputChat(props:any) {
     )
 }
 function convertIcon(url:string){
-    return '<img src="'+url+'" alt="My Image" className="icon">'
+    return '<img src="'+url+'" alt="My Image" class="icon">'
 }
