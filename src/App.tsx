@@ -1,26 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect} from 'react';
+
 import './App.css';
+import {LoginPage, ZaloHomePage} from "./home";
+import {Provider, useDispatch} from "react-redux";
+import {createStore} from "@reduxjs/toolkit";
+import {rootReducer} from "./store/rootReducer";
+import {BrowserRouter, Routes, Route, useRoutes, Router} from "react-router-dom";
+import {LoginStatusProvider, WebSocketProvider} from "./store/webSocketProvider";
+import {PersistGate} from "redux-persist/integration/react";
+import store, {persistor} from "./store/store";
+
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const store = createStore(rootReducer);
+
+    return (
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <WebSocketProvider>
+                    <LoginStatusProvider>
+                        <BrowserRouter>
+                            <Routes>
+                                <Route path={"/"} element={<LoginPage/>}/>
+                                <Route path={"chat"} element={<ZaloHomePage/>}/>
+                            </Routes>
+                        </BrowserRouter>
+                    </LoginStatusProvider>
+                </WebSocketProvider>
+            </PersistGate>
+        </Provider>
+    );
 }
+
 
 export default App;
