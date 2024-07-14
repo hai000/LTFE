@@ -31,18 +31,14 @@ export function InputChat(props:any) {
             const currentValue = inputElement.value;
             const selectionStart = inputElement.selectionStart || 0;
             const selectionEnd = inputElement.selectionEnd || 0;
-
             // Thêm emoji vào vị trí con trỏ chuột
             const newValue =
                 currentValue.slice(0, selectionStart) +
                 emojiObject.emoji +
                 currentValue.slice(selectionEnd);
-
             setMessage(newValue);
             mapIcon.set(emojiObject.emoji, convertIcon(emojiObject.imageUrl));
             setMapIcon(mapIcon)
-
-
         }
     };
     const handleClickIcon = (event: MouseEvent) => {
@@ -88,7 +84,6 @@ export function InputChat(props:any) {
     function clickSendMessage() {
         let convertMsg ='';
         const parts = message.split(/([\p{Emoji}])/gu);
-        console.log('parts ',parts)
         parts.forEach(value =>{
             if(mapIcon.has(value)){
                 convertMsg += (mapIcon.get(value));
