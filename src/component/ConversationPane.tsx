@@ -14,6 +14,7 @@ import {faPeopleGroup, faUser, faUserGroup, faUsers} from "@fortawesome/free-sol
 
 export default function ConversationPaneList(props: any) {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const [stateComponent,setStateComponent] = useState(true);
     const [conversation, setConversation] = useState([
         null,
         null]);
@@ -24,8 +25,20 @@ export default function ConversationPaneList(props: any) {
             let data = JSON.parse(lastMessage.data);
             if (data.status == "success" && data.event == "GET_USER_LIST") {
                 store.dispatch(setConversationPane(data.data))
+            }
+            if (data.status == "success" && data.event == "CREATE_ROOM") {
+                let date = new Date();
+                let dataStore = {
+                    name: data.data.name,
+                    type: 1,
+                    actionTime:date.getDate()+" "+ date.getTime()
+                }
+                store.dispatch(addConversationPane(dataStore))
+                setStateComponent(!stateComponent)
 
             }
+
+
         }
     }, [lastMessage])
     useEffect(() => {

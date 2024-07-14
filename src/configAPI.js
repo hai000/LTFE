@@ -110,7 +110,17 @@ export function payloadRegisterAPI(username, password) {
         }
     })
 }
-
+export function payloadJoinRoom(name) {
+    return JSON.stringify({
+        "action": "onchat",
+        "data": {
+            "event": "JOIN_ROOM",
+            "data": {
+                "name": name
+            }
+        }
+    })
+}
 
 export function payloadLoginAPI(username, password) {
     return JSON.stringify({
