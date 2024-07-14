@@ -12,7 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {InputChat} from "./InputChat";
 
 export default function BoxChat(props: any) {
-    const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const {sendMessage, lastMessage, readyState,  members} = useWebSocketContext()
     const [myMessage, setMyMessage] = useState("")
     const [status, setStatus] = useState(false);
     console.log(props)
@@ -33,7 +33,8 @@ export default function BoxChat(props: any) {
                 setStatus(JSON.parse(lastMessage.data).data.status)
             }
         }
-    }, [lastMessage.data]);
+    }, [lastMessage]);
+    console.log(props)
     return (
         <div className={"p-0"}>
             <Row>
@@ -55,7 +56,7 @@ export default function BoxChat(props: any) {
 
 export function ChatMessage(props: any) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(props.mes, 'text/html');
+
     return (
         <div className={props.my_message ? "d-flex flex-column my_message col-lg-9 pr-0" : "d-flex flex-column other_message col-lg-10 pl-0"}>
             {props.isNear ? null :
@@ -101,7 +102,7 @@ export function ChatMessageList(props: any) {
     let messages = loadMessages(store.getState()).reverse();
     let messageElements = [];
     const user = loadUser(store.getState())
-    const {sendMessage, lastMessage, readyState} = useWebSocketContext()
+    const {sendMessage, lastMessage, readyState, members, setMember} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
 
     useEffect(() => {
@@ -132,6 +133,7 @@ export function ChatMessageList(props: any) {
     }, [lastMessage]);
 
      messages = loadMessages(store.getState()).reverse();
+     let listMember:string[] = [];
     // console.log(messages)
     for (let i = 0; i < messages.length; i++) {
         let data = messages[i];
@@ -139,9 +141,12 @@ export function ChatMessageList(props: any) {
         let curName = data.name;
         let name = curName != oldName ? curName : "";
         let createAt = curName != oldName ? data.createAt : "";
-
+        if(!listMember.includes(curName)){
+            listMember.push(curName);
+        }
         messageElements.push(
             <ChatMessage
+
                 name={curName}
                 my_message={data.name === user.username}
                 mes={data.mes}
@@ -150,7 +155,7 @@ export function ChatMessageList(props: any) {
             />
         );
     }
-
+    setMember(listMember.length)
     return (
         <div>
             {messageElements}
@@ -160,6 +165,8 @@ export function ChatMessageList(props: any) {
 }
 
 export function ConversationObject(props: any) {
+    const {sendMessage, lastMessage, readyState, members, setMember} = useWebSocketContext()
+
     console.log(props)
     return (
         <Row className="chat">
@@ -174,7 +181,10 @@ export function ConversationObject(props: any) {
                     <strong className="card-title col-lg-7 pb-0 mb-0 fs-5">{props.conversation[0]}</strong>
                 </Row>
 
-                    {props.conversation[1] == 1 ? "" :
+                    {props.conversation[1] == 1 ? <Row className="align-items-center">
+                            <FontAwesomeIcon
+                                icon={faUsers} className="w-fit p-1"/>
+                            <span className="card-title col-lg-8 mb-0 pl-1 pb-4px">{members} Members</span></Row> :
                         <Row className="align-items-center">
                         <div className={props.status ? "icon-onl" : "icon-off"}/>
                         <span className="card-title col-lg-8 mb-0 pl-1 pb-4px">{props.status ? "Online" : "Offline"}</span></Row>
