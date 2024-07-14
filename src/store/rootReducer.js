@@ -16,7 +16,8 @@ export const rootReducer = createReducer(initState, (builder) => {
             user: action.payload
         }
     });
-    builder.addCase('add.conversationPane', (state, action) => {
+    builder.addCase('set.messageList', (state, action) => {
+       state.conversationPane.unshift(action.payload)
 
     });
     builder.addCase('set.conversationPane', (state, action) => {

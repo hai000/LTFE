@@ -12,6 +12,13 @@ export const updateUser = (data) => {
 
     }
 }
+export const addConversationPane = (data) => {
+    return {
+        type: 'set.messageList',
+        payload: data
+
+    }
+}
 export const setMessageList = (data) => {
     return {
         type: 'set.messageList',
@@ -27,6 +34,7 @@ export const setConversationPane = (data) => {
 
     }
 }
+
 export const setMessages = (data) => {
     return {
         type: 'set.Messages',
@@ -38,12 +46,5 @@ export const addMessage = (data) => {
     return {
         type: 'add.message',
         payload: data
-    }
-}
-export const addConversationPane = (data) => {
-    return {
-        type: 'add.conversationPane',
-        payload: data
-
     }
 }
