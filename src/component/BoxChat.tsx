@@ -25,15 +25,19 @@ export default function BoxChat(props: any) {
         }
     }, props.data);
     useEffect(() => {
-        sendMessage(payloadCheckPeople(props.data[0]))
-        if (lastMessage !== null) {//nhan data tu server
 
+
+        if (lastMessage !== null) {//nhan data tu server
+            if(JSON.parse(lastMessage.data).event != "CHECK_USER" && props.data[1] == 0){
+                sendMessage(payloadCheckPeople(props.data[0]))
+            }
             if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "CHECK_USER") {
                 console.log("status ", props.data[0], lastMessage)
                 setStatus(JSON.parse(lastMessage.data).data.status)
             }
         }
     }, [lastMessage]);
+
     console.log(props)
     return (
         <div className={"p-0"}>
