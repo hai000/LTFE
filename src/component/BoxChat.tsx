@@ -15,7 +15,6 @@ export default function BoxChat(props: any) {
     const {sendMessage, lastMessage, readyState,  members} = useWebSocketContext()
     const [myMessage, setMyMessage] = useState("")
     const [status, setStatus] = useState(false);
-    console.log(props)
     useEffect(() => {
         if (props.data[1] == 1) {
             sendMessage(payloadGetRoomChatMessAPI(props.data[0], 1))
