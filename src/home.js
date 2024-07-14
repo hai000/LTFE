@@ -118,11 +118,7 @@ export const LoginPage = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const onLogin = () => {// gui request len server
-        if(readyState ==2 || readyState ==3){
-
-        }
         sendMessage(payloadLoginAPI(username, password))
-        console.log(readyState)
     }
     useEffect(() => {
 

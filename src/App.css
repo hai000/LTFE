@@ -198,6 +198,13 @@
   border-radius: 50%;
   background-color: #5dc46b;
 }
+.icon-off{
+  width: 13px !important;
+  height: 13px !important;
+  padding: 0 !important;
+  border-radius: 50%;
+  background-color: #d20505;
+}
 .time{
   font-size: 13px;
 }

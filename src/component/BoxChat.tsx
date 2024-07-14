@@ -2,9 +2,9 @@ import {useWebSocketContext} from "../store/webSocketProvider";
 import {useSelector} from "react-redux";
 import {Row} from "react-bootstrap";
 import React, {useCallback, useEffect, useMemo, useState} from "react";
-import {payloadGetPeopleChatMessAPI, payloadGetRoomChatMessAPI} from "../configAPI";
+import {payloadCheckPeople, payloadGetPeopleChatMessAPI, payloadGetRoomChatMessAPI} from "../configAPI";
 import store from "../store/store";
-import {addMessage, setConversationPane, setMessages} from "../store/action";
+import {addMessage, login, setConversationPane, setMessages} from "../store/action";
 import {loadConversationPane, loadMessages, loadUser} from "../selector/selector";
 import {ConservationPaneItem} from "./ConversationPane";
 import {faUser, faUsers} from "@fortawesome/free-solid-svg-icons";
@@ -14,20 +14,30 @@ import {InputChat} from "./InputChat";
 export default function BoxChat(props: any) {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [myMessage, setMyMessage] = useState("")
+    const [status, setStatus] = useState(false);
     console.log(props)
     useEffect(() => {
         if (props.data[1] == 1) {
             sendMessage(payloadGetRoomChatMessAPI(props.data[0], 1))
         } else {
             sendMessage(payloadGetPeopleChatMessAPI(props.data[0], 1))
+
         }
     }, props.data);
+    useEffect(() => {
+        sendMessage(payloadCheckPeople(props.data[0]))
+        if (lastMessage !== null) {//nhan data tu server
 
-
+            if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "CHECK_USER") {
+                console.log("status ", props.data[0], lastMessage)
+                setStatus(JSON.parse(lastMessage.data).data.status)
+            }
+        }
+    }, [lastMessage.data]);
     return (
         <div className={"p-0"}>
             <Row>
-                {props.data[1] !=null?<ConversationObject conversation={props.data} status="Online"className={"border-bottom"}/>:""}
+                {props.data[1] !=null?<ConversationObject conversation={props.data} status= {status} className={"border-bottom"}/>:""}
                 <div className="chat-messages row">
                     {props.data[1] != null? <ChatMessageList conversation={props.data} myMess={myMessage}/>:
                         <div className={"d-flex align-items-center justify-content-center w-100 h-100"}>
@@ -68,7 +78,7 @@ export function ChatMessage(props: any) {
                 </div>}
                 <p className={props.my_message ? "my_message_item" : "other_message_item"}>
                     <div className={"mes_content"} dangerouslySetInnerHTML={{__html: props.mes}}></div>
-                    {/*{props.mes}*/}
+
                 </p>
             </div>
         </div>
@@ -163,14 +173,15 @@ export function ConversationObject(props: any) {
                 <Row>
                     <strong className="card-title col-lg-7 pb-0 mb-0 fs-5">{props.conversation[0]}</strong>
                 </Row>
-                <Row className="align-items-center">
-                    <div className=" icon-onl">
 
-                    </div>
-                    <span className="card-title col-lg-8 mb-0 pl-1 pb-4px">{props.status}</span>
-                </Row>
-            </div>
-        </Row>
-    )
+                    {props.conversation[1] == 1 ? "" :
+                        <Row className="align-items-center">
+                        <div className={props.status ? "icon-onl" : "icon-off"}/>
+                        <span className="card-title col-lg-8 mb-0 pl-1 pb-4px">{props.status ? "Online" : "Offline"}</span></Row>
+                }
+
+</div>
+</Row>
+)
 
 }

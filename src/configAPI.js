@@ -55,6 +55,17 @@ export function payloadGetPeopleChatMessAPI(namePeople,page) {
         }
     })
 }
+export function payloadCheckPeople(namePeople) {
+    return JSON.stringify({
+        "action": "onchat",
+        "data": {
+            "event": "CHECK_USER",
+            "data": {
+                "user": namePeople
+            }
+        }
+    })
+}
 export function payloadGetRoomChatMessAPI(nameRoom,page) {
     return JSON.stringify({
         "action": "onchat",
