@@ -195,18 +195,25 @@ export const LoginPage = () => {
 
     return (
         <Container>
-            <Row className="justify-content-center">
+            <Row className="justify-content-center col-lg-8 m-auto mt-5">
                 <Col>
-                    <Card>
+                    <Card className={" p-4"}>
                         <Card.Body>
                             <h1 className="text-center text-secondary">NLU CHAT APP</h1>
-                            <input type="text" placeholder="Username" className="form-control mb-3" id="username"
-                                   onChange={e => setUsername(e.target.value)}/>
-                            <input type="password" placeholder="Password" className="form-control mb-3" id="password"
-                                   onChange={e => setPassword(e.target.value)}/>
-                            <p className="text-danger">{loginFailed}</p>
-                            <Button variant="primary" type="submit" className="w-100 mb-2" onClick={onRegister}>Register</Button>
-                            <Button variant="primary" type="submit" className="w-100" onClick={onLogin}>Login</Button>
+                            <Row className={""}>
+                                <input type="text" placeholder="Username" className="form-control mb-3" id="username"
+                                       onChange={e => setUsername(e.target.value)}/>
+                                <input type="password" placeholder="Password" className="form-control mb-3"
+                                       id="password"
+                                       onChange={e => setPassword(e.target.value)}/>
+                                <p className="text-danger">{loginFailed}</p>
+                                <Row className={"justify-content-around"}>
+                                    <Button variant="primary" type="submit" className="col-lg-4 "
+                                            onClick={onRegister}>Register</Button>
+                                    <Button variant="primary" type="submit" className="col-lg-4"
+                                            onClick={onLogin}>Login</Button>
+                                </Row>
+                            </Row>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -214,7 +221,6 @@ export const LoginPage = () => {
         </Container>
     );
 };
-
 
 
 function inputMsg() {

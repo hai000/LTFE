@@ -8,6 +8,7 @@ const WebSocketContext = createContext();
 export const WebSocketProvider = ({ children }) => {
 
     const didUnmount = useRef(false);
+    const [members, setMember] = useState(0)
     // setWebSocket(new WebSocket(websocketUrl))
     const { sendMessage, lastMessage, readyState } = useWebSocket(
         websocket_url, {
@@ -19,7 +20,7 @@ export const WebSocketProvider = ({ children }) => {
         }
     );
     return (
-        <WebSocketContext.Provider value={{ sendMessage, lastMessage, readyState}}>
+        <WebSocketContext.Provider value={{ sendMessage, lastMessage, readyState, members, setMember}}>
             {children}
         </WebSocketContext.Provider>
     );
