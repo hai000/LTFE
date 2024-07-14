@@ -8,7 +8,17 @@ import store from "./store/store";
 import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket, {resetGlobalState} from "react-use-websocket";
-import {payloadLoginAPI, payloadLogout, payloadRegisterAPI, payloadReLoginAPI, websocket_url} from "./configAPI";
+
+import {
+    payloadCheckUser,
+    payloadCreateRoomAPI, payloadGetPeopleChatMessAPI, payloadGetUserList, payloadJoinRoom,
+    payloadLoginAPI,
+    payloadLogout,
+    payloadReLoginAPI,
+    websocket_url
+} from "./configAPI";
+
+
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
 
@@ -29,10 +39,41 @@ export const ZaloHomePage = () => {
     const {sendMessage, lastMessage, readyState} = useWebSocketContext()
     const [stateComponent, setStateComponent] = useState(false)
     const {loginStatus, setLoginStatus} = useLoginStatusContext();
+    const [inputValue, setInputValue] = useState('');
+    const [isRoomChecked, setIsRoomChecked] = useState(false);
+    const [stateListUser,setStateListUser] = useState([])
+
+
+    const handleInputChange = (e) => {
+        setInputValue(e.target.value);
+    };
+    const handleCheckboxChange = (e) => {
+        setIsRoomChecked(e.target.checked);
+    };
+
+    const createRoom = () => {
+        if(isRoomChecked){
+            sendMessage(payloadCreateRoomAPI(inputValue))
+        }
+
+    };
+    const joinChat = () => {
+        if(isRoomChecked){
+            console.log("tai sao ha")
+            sendMessage(payloadJoinRoom(inputValue))
+        }else{
+            sendMessage(payloadCheckUser(inputValue))
+            console.log("checkuser roi ma")
+        }
+
+
+    };
+
+
+
     const onLogout =() =>{
         sendMessage(payloadLogout())
         // setWebsocketUrl("wss://demos.kaazing.com/echo")
-
         setLoginStatus(false)
         navigate("/")
 
@@ -40,7 +81,6 @@ export const ZaloHomePage = () => {
 
 
     useEffect(() => {
-
         if (user.status != "success") {
             navigate('/');
         } else if (user.status == "success") {
@@ -48,20 +88,27 @@ export const ZaloHomePage = () => {
 
         }
     }, [navigate]);
+
     useEffect(() => {
         if (lastMessage !== null) {
             if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
-
                 store.dispatch(updateUser(JSON.parse(lastMessage.data).data))
                 setStateComponent(!stateComponent)
             } else if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
                 navigate('/')
+            } else if(JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "CHECK_USER"){
+               sendMessage(payloadGetPeopleChatMessAPI(inputValue,1));
+                setConversationPaneState([inputValue, 0]);
+            } else if(JSON.parse(lastMessage.data).status =="success"&& JSON.parse(lastMessage.data).event == "JOIN_ROOM"){
+                setConversationPaneState([inputValue, 1]);
+            }else if(JSON.parse(lastMessage.data).status =="success"&& JSON.parse(lastMessage.data).event == "CREATE_ROOM"){
+                setConversationPaneState([inputValue, 1]);
             }
         }
 
     }, [lastMessage])
     const [conversationPaneState, setConversationPaneState] = useState([null, null])
-    // console.log(conversationPaneState)
+
     return (
 
         <Container>
@@ -77,18 +124,21 @@ export const ZaloHomePage = () => {
                             <Card.Body className="col-lg-5">
                                 <h1 className="text-center text-secondary">NLU CHAT APP</h1>
                                 <Row className="align-items-center nav">
-                                    <input type="text" placeholder="Name of Room or People" className="name-room ml-3"/>
+                                    <input type="text" placeholder="Name of Room or People" className="name-room ml-3" onChange={handleInputChange}/>
                                     <input type="checkbox" name="isRoom" id="isRoom"
-                                           class="form-check w-fit w-20px ml-3"/>
+                                           class="form-check w-fit w-20px ml-3" onChange={handleCheckboxChange}/>
                                     <label for="isRoom" className="w-fit">Room</label>
-                                    <div className="btn btn-primary btn-icon ml-3 btnAdd "><i
-                                        className="bi bi-plus-square-fill"></i></div>
-                                    <div className="btn btn-primary btn-icon ml-3"><i
-                                        className="bi bi-arrow-right-circle-fill"></i></div>
+                                    <button className="btn btn-primary btn-icon ml-3 btnAdd " onClick={createRoom}><i
+                                        className="bi bi-plus-square-fill"></i></button>
+                                    <button className="btn btn-primary btn-icon ml-3" onClick={joinChat}><i
+                                        className="bi bi-arrow-right-circle-fill"></i></button>
                                 </Row>
                                 <Row className="chat-list">
                                     <ConversationPaneList data={conversationPaneState}
-                                                          update={setConversationPaneState}/>
+                                                          update={setConversationPaneState}
+                                                          state={stateListUser}
+
+                                    />
 
                                 </Row>
                             </Card.Body>
