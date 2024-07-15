@@ -20,8 +20,6 @@ export default function ConversationPaneList(props: any) {
         null]);
 
 
-
-
     useEffect(() => {
         if (lastMessage != null) {
             let data = JSON.parse(lastMessage.data);
@@ -35,18 +33,10 @@ export default function ConversationPaneList(props: any) {
                     type: 1,
                     actionTime:date.getDate()+" "+ date.getTime()
                 }
-                console.log(dataStore + "complete")
                 store.dispatch(addConversationPane(dataStore))
-                setStateComponent(!stateComponent)// cập nhật component
-
-
-            }
-
-            if(data.status == "success" && data.event == "GET_PEOPLE_CHAT_MES"){
-                console.log("GET_PEOPLE_CHAT_MES")
+                setStateComponent(!stateComponent)
 
             }
-
 
 
         }

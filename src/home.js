@@ -8,17 +8,14 @@ import store from "./store/store";
 import {login, updateUser} from "./store/action";
 import {useDispatch} from "react-redux";
 import useWebSocket, {resetGlobalState} from "react-use-websocket";
-
 import {
     payloadCheckUser,
-    payloadCreateRoomAPI, payloadGetPeopleChatMessAPI, payloadGetUserList, payloadJoinRoom,
+    payloadCreateRoomAPI, payloadJoinRoom,
     payloadLoginAPI,
     payloadLogout,
     payloadReLoginAPI,
     websocket_url
 } from "./configAPI";
-
-
 import {useLocation, useNavigate} from "react-router-dom";
 import {loadUser} from "./selector/selector";
 
@@ -59,14 +56,10 @@ export const ZaloHomePage = () => {
     };
     const joinChat = () => {
         if(isRoomChecked){
-            console.log("tai sao ha")
             sendMessage(payloadJoinRoom(inputValue))
         }else{
-            sendMessage(payloadCheckUser(inputValue))
-            console.log("checkuser roi ma")
+            setConversationPaneState([inputValue, 0]);
         }
-
-
     };
 
 
@@ -92,13 +85,11 @@ export const ZaloHomePage = () => {
     useEffect(() => {
         if (lastMessage !== null) {
             if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
+
                 store.dispatch(updateUser(JSON.parse(lastMessage.data).data))
                 setStateComponent(!stateComponent)
             } else if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "RE_LOGIN") {
                 navigate('/')
-            } else if(JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "CHECK_USER"){
-               sendMessage(payloadGetPeopleChatMessAPI(inputValue,1));
-                setConversationPaneState([inputValue, 0]);
             } else if(JSON.parse(lastMessage.data).status =="success"&& JSON.parse(lastMessage.data).event == "JOIN_ROOM"){
                 setConversationPaneState([inputValue, 1]);
             }else if(JSON.parse(lastMessage.data).status =="success"&& JSON.parse(lastMessage.data).event == "CREATE_ROOM"){
@@ -108,7 +99,7 @@ export const ZaloHomePage = () => {
 
     }, [lastMessage])
     const [conversationPaneState, setConversationPaneState] = useState([null, null])
-
+    // console.log(conversationPaneState)
     return (
 
         <Container>
@@ -167,12 +158,12 @@ export const LoginPage = () => {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [loginFailed, setLoginFailed] = useState('')
     const onLogin = () => {// gui request len server
+        if(readyState ==2 || readyState ==3){
+
+        }
         sendMessage(payloadLoginAPI(username, password))
-    }
-    const onRegister= () =>{
-        sendMessage(payloadRegisterAPI(username,password))
+        console.log(readyState)
     }
     useEffect(() => {
 
@@ -183,45 +174,23 @@ export const LoginPage = () => {
                 store.dispatch(login(jsondata))
                 setLoginStatus(true)
             }
-            if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "LOGIN") {
-                let jsondata = JSON.parse(lastMessage.data)
-                setLoginFailed(jsondata.mes)
-            }
-            if (JSON.parse(lastMessage.data).status == "success" && JSON.parse(lastMessage.data).event == "REGISTER") {
-                //dang ki thanh cong dang nhap
-                onLogin();
-            }
-            if (JSON.parse(lastMessage.data).status == "error" && JSON.parse(lastMessage.data).event == "REGISTER") {
-                let jsondata = JSON.parse(lastMessage.data)
-                setLoginFailed(jsondata.mes)
-            }
-
         }
-
+        console.log(lastMessage)
     }, [lastMessage])
 
 
     return (
         <Container>
-            <Row className="justify-content-center col-lg-8 m-auto mt-5">
+            <Row className="justify-content-center">
                 <Col>
-                    <Card className={" p-4"}>
+                    <Card>
                         <Card.Body>
                             <h1 className="text-center text-secondary">NLU CHAT APP</h1>
-                            <Row className={""}>
-                                <input type="text" placeholder="Username" className="form-control mb-3" id="username"
-                                       onChange={e => setUsername(e.target.value)}/>
-                                <input type="password" placeholder="Password" className="form-control mb-3"
-                                       id="password"
-                                       onChange={e => setPassword(e.target.value)}/>
-                                <p className="text-danger">{loginFailed}</p>
-                                <Row className={"justify-content-around"}>
-                                    <Button variant="primary" type="submit" className="col-lg-4 "
-                                            onClick={onRegister}>Register</Button>
-                                    <Button variant="primary" type="submit" className="col-lg-4"
-                                            onClick={onLogin}>Login</Button>
-                                </Row>
-                            </Row>
+                            <input type="text" placeholder="Username" className="form-control mb-3" id="username"
+                                   onChange={e => setUsername(e.target.value)}/>
+                            <input type="password" placeholder="Password" className="form-control mb-3" id="password"
+                                   onChange={e => setPassword(e.target.value)}/>
+                            <Button variant="primary" type="submit" className="w-100" onClick={onLogin}>Login</Button>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -229,6 +198,7 @@ export const LoginPage = () => {
         </Container>
     );
 };
+
 
 
 function inputMsg() {
